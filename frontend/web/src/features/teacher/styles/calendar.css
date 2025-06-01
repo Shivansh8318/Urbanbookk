@@ -1,0 +1,49 @@
+/* src/features/teacher/styles/calendar.css */
+.rbc-calendar {
+  background-color: #1F2937;
+}
+.rbc-date-cell {
+  color: #FFFFFF !important;
+}
+.rbc-date-cell.rbc-off-range {
+  color: #9CA3AF !important;
+}
+.rbc-date-cell.rbc-now {
+  color: #FFFFFF !important;
+  background-color: #4B5563;
+}
+.rbc-event {
+  background-color: #4F46E5 !important;
+  color: #FFFFFF !important;
+}
+.rbc-event.rbc-selected {
+  background-color: #7C3AED !important;
+}
+.rbc-day-bg {
+  background-color: #1F2937;
+}
+.rbc-day-bg.rbc-off-range-bg {
+  background-color: #374151;
+}
+.rbc-header {
+  background-color: #1F2937;
+  color: #FFFFFF;
+  border-bottom: 1px solid #4B5563 !important;
+}
+.rbc-time-view {
+  background-color: #1F2937;
+}
+.rbc-time-header {
+  background-color: #1F2937;
+  color: #FFFFFF;
+}
+.rbc-time-content {
+  background-color: #1F2937;
+  color: #FFFFFF;
+}
+.rbc-time-slot {
+  color: #D1D5DB;
+}
+.rbc-today {
+  background-color: #4B5563;
+}

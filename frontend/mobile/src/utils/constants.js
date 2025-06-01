@@ -1,0 +1,1 @@
+export const MEETING_URL = 'https://shivansh-videoconf-309.app.100ms.live/meeting/uvr-mzvu-vgd';
