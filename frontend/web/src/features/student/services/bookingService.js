@@ -1,4 +1,3 @@
-// src/features/student/services/bookingService.js
 import axios from '../../../utils/axios';
 
 export const fetchAllSlots = async (teacherId) => {

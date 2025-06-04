@@ -1,4 +1,3 @@
-// src/features/student/screens/StudentBooking.jsx
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import moment from 'moment';

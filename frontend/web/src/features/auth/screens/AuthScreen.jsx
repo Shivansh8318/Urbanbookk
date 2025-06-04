@@ -76,30 +76,6 @@ const AuthScreen = () => {
     document.getElementById('otpless-login-page')?.click();
   };
 
-  const renderUserInfo = () => {
-    if (!userData) return null;
-    return (
-      <div className="w-full p-4 bg-white rounded-lg border border-gray-200">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">User Information</h3>
-        {userData.token && <p className="text-sm text-gray-600">Token: {userData.token.substring(0, 15)}...</p>}
-        {userData.userId && <p className="text-sm text-gray-600">User ID: {userData.userId}</p>}
-        {userData.identities && userData.identities.length > 0 && (
-          <>
-            <h4 className="text-base font-semibold text-gray-700 mt-4">Identity</h4>
-            <p className="text-sm text-gray-600">Type: {userData.identities[0].identityType}</p>
-            <p className="text-sm text-gray-600">Value: {userData.identities[0].identityValue}</p>
-            {userData.identities[0].name && <p className="text-sm text-gray-600">Name: {userData.identities[0].name}</p>}
-          </>
-        )}
-        {verificationStatus && (
-          <div className="mt-4 p-3 bg-gray-100 rounded-lg border-l-4 border-indigo-600">
-            <p className="text-sm text-gray-900">{verificationStatus}</p>
-          </div>
-        )}
-      </div>
-    );
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <div className="max-w-4xl mx-auto p-6">
@@ -142,7 +118,11 @@ const AuthScreen = () => {
                   <p className="text-sm text-gray-900">{loginStatus}</p>
                 </div>
               )}
-              {renderUserInfo()}
+              {verificationStatus && (
+                <div className="mt-4 p-3 bg-gray-100 rounded-lg border-l-4 border-indigo-600">
+                  <p className="text-sm text-gray-900">{verificationStatus}</p>
+                </div>
+              )}
             </>
           )}
         </motion.div>
