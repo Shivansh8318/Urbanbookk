@@ -1,4 +1,3 @@
-// src/features/teacher/screens/TeacherBooking.jsx
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import moment from 'moment';
@@ -9,6 +8,7 @@ import teacherImage from '../../../assets/images/9.jpg';
 import { fetchSlots } from '../services/teacherService';
 import useBookingWebSocket from '../../shared/websocket/useBookingWebSocket';
 import CustomToolbar from '../components/CustomToolbar';
+import Sidebar from '../components/Sidebar';
 import '../styles/calendar.css';
 
 Modal.setAppElement('#root');
@@ -27,6 +27,14 @@ const TeacherBooking = () => {
   const [bookedSlots, setBookedSlots] = useState([]);
   const [pendingSlots, setPendingSlots] = useState([]);
   const [showMeeting, setShowMeeting] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const sidebarItems = [
+    { label: 'Dashboard', path: '/teacher/dashboard', icon: '🏠' },
+    { label: 'Manage Slots', path: '/teacher/booking', icon: '📅' },
+    { label: 'View Bookings', path: '/teacher/booking', icon: '📚' },
+    { label: 'Track Sessions', path: '/teacher/booking', icon: '📊' },
+  ];
 
   if (!userData?.user_id) {
     console.error('userData is missing or invalid:', userData);
@@ -168,159 +176,197 @@ const TeacherBooking = () => {
     isBooked: slot.is_booked,
   }));
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 relative overflow-hidden">
       <img src={teacherImage} alt="Background" className="absolute inset-0 w-full h-full object-cover opacity-30" />
-      <div className="relative max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
-        <motion.h1
-          className="text-3xl sm:text-4xl font-bold text-white text-center mb-8"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+      <div className="flex min-h-screen">
+        {/* Sidebar */}
+        <div
+          className={`fixed inset-y-0 left-0 transform ${
+            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          } md:translate-x-0 md:static md:flex md:w-64 transition-transform duration-300 ease-in-out z-50 bg-gray-900`}
         >
-          Manage Your Slots
-        </motion.h1>
+          <Sidebar userData={userData} role="Teacher" sidebarItems={sidebarItems} />
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mb-8"
+        {/* Hamburger Menu Button */}
+        <button
+          className="md:hidden fixed top-4 left-4 z-50 text-white text-2xl focus:outline-none"
+          onClick={toggleSidebar}
         >
-          <h2 className="text-2xl font-semibold text-white mb-4">Add New Slot</h2>
-          <Calendar
-            localizer={localizer}
-            date={date}
-            events={events}
-            startAccessor="start"
-            endAccessor="end"
-            style={{ height: 500 }}
-            className="bg-gray-800 rounded-lg p-4 border border-gray-600"
-            onSelectSlot={({ start }) => setDate(start)}
-            onNavigate={(newDate) => setDate(newDate)}
-            selectable
-            min={new Date()}
-            components={{ toolbar: CustomToolbar }}
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-            <input
-              className="p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="Date (YYYY-MM-DD)"
-              value={moment(date).format('YYYY-MM-DD')}
-              readOnly
-            />
-            <input
-              className="p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="Start Time (HH:MM)"
-              value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
-            />
-            <input
-              className="p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="End Time (HH:MM)"
-              value={endTime}
-              onChange={(e) => setEndTime(e.target.value)}
-            />
+          {isSidebarOpen ? '✕' : '☰'}
+        </button>
+
+        {/* Main Content */}
+        <div className="flex-1 p-4 sm:p-6 lg:p-8">
+          <div className="relative max-w-6xl mx-auto">
+            <motion.h1
+              className="text-3xl sm:text-4xl font-bold text-white text-center mb-8"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              Manage Your Slots
+            </motion.h1>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="mb-8"
+            >
+              <h2 className="text-2xl font-semibold text-white mb-4">Add New Slot</h2>
+              <Calendar
+                localizer={localizer}
+                date={date}
+                events={events}
+                startAccessor="start"
+                endAccessor="end"
+                style={{ height: 500 }}
+                className="bg-gray-800 rounded-lg p-4 border border-gray-600"
+                onSelectSlot={({ start }) => setDate(start)}
+                onNavigate={(newDate) => setDate(newDate)}
+                selectable
+                min={new Date()}
+                components={{ toolbar: CustomToolbar }}
+              />
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+                <input
+                  className="p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Date (YYYY-MM-DD)"
+                  value={moment(date).format('YYYY-MM-DD')}
+                  readOnly
+                />
+                <input
+                  className="p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Start Time (HH:MM)"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                />
+                <input
+                  className="p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="End Time (HH:MM)"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                />
+              </div>
+              <button
+                className="w-full mt-4 bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition"
+                onClick={handleAddSlot}
+              >
+                Add Slot
+              </button>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mb-8"
+            >
+              <h2 className="text-2xl font-semibold text-white mb-4">
+                Upcoming Slots <span className="text-sm text-white opacity-70">Total: {upcomingSlots.length}</span>
+              </h2>
+              {upcomingSlots.length === 0 ? (
+                <p className="text-white opacity-70">No upcoming slots.</p>
+              ) : (
+                <div className="space-y-4 max-h-64 overflow-y-auto">
+                  {upcomingSlots.map((slot) => (
+                    <div
+                      key={slot.id}
+                      className="p-4 bg-gray-800 rounded-lg border border-gray-600"
+                    >
+                      <p className="text-white">
+                        {slot.date} {slot.start_time} - {slot.end_time}
+                        {slot.id && String(slot.id).startsWith('temp_') && <span className="text-yellow-400 text-sm ml-2">(Pending)</span>}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <h2 className="text-2xl font-semibold text-white mb-4">
+                Booked Slots <span className="text-sm text-white opacity-70">Total: {bookedSlots.length}</span>
+              </h2>
+              {bookedSlots.length === 0 ? (
+                <p className="text-white opacity-70">No booked slots.</p>
+              ) : (
+                <div className="space-y-4 max-h-64 overflow-y-auto">
+                  {bookedSlots.map((slot) => (
+                    <div
+                      key={slot.id}
+                      className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-gray-800 rounded-lg border border-gray-600"
+                    >
+                      <div>
+                        <p className="text-white">
+                          {slot.date} {slot.start_time} - {slot.end_time}
+                        </p>
+                        {slot.status && <p className="text-white opacity-60 text-sm">Status: {slot.status}</p>}
+                        {slot.student_name && <p className="text-white opacity-70 text-sm">Student: {slot.student_name}</p>}
+                      </div>
+                      <button
+                        className="mt-2 sm:mt-0 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                        onClick={() => setShowMeeting(true)}
+                      >
+                        Start Class
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+
+            <Modal
+              isOpen={showMeeting}
+              onRequestClose={() => setShowMeeting(false)}
+              style={{
+                content: {
+                  top: '0',
+                  left: '0',
+                  right: '0',
+                  bottom: '0',
+                  margin: '0',
+                  padding: '0',
+                  width: '100%',
+                  height: '100%',
+                  border: 'none',
+                  borderRadius: '0',
+                  background: '#1F2937',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  overflow: 'hidden',
+                },
+                overlay: {
+                  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                  zIndex: 1000,
+                },
+              }}
+            >
+              <iframe
+                src={meetingURL}
+                className="w-full h-[calc(100vh-60px)]"
+                allow="camera; microphone"
+                title="Video Meeting"
+              />
+              <button
+                className="bg-red-600 text-white px-4 py-2 hover:bg-red-700 transition w-full"
+                onClick={() => setShowMeeting(false)}
+              >
+                Close
+              </button>
+            </Modal>
           </div>
-          <button
-            className="w-full mt-4 bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition"
-            onClick={handleAddSlot}
-          >
-            Add Slot
-          </button>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mb-8"
-        >
-          <h2 className="text-2xl font-semibold text-white mb-4">
-            Upcoming Slots <span className="text-sm text-white opacity-70">Total: {upcomingSlots.length}</span>
-          </h2>
-          {upcomingSlots.length === 0 ? (
-            <p className="text-white opacity-70">No upcoming slots.</p>
-          ) : (
-            <div className="space-y-4 max-h-64 overflow-y-auto">
-              {upcomingSlots.map((slot) => (
-                <div
-                  key={slot.id}
-                  className="p-4 bg-gray-800 rounded-lg border border-gray-600"
-                >
-                  <p className="text-white">
-                    {slot.date} {slot.start_time} - {slot.end_time}
-                    {slot.id && String(slot.id).startsWith('temp_') && <span className="text-yellow-400 text-sm ml-2">(Pending)</span>}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          <h2 className="text-2xl font-semibold text-white mb-4">
-            Booked Slots <span className="text-sm text-white opacity-70">Total: {bookedSlots.length}</span>
-          </h2>
-          {bookedSlots.length === 0 ? (
-            <p className="text-white opacity-70">No booked slots.</p>
-          ) : (
-            <div className="space-y-4 max-h-64 overflow-y-auto">
-              {bookedSlots.map((slot) => (
-                <div
-                  key={slot.id}
-                  className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-gray-800 rounded-lg border border-gray-600"
-                >
-                  <div>
-                    <p className="text-white">
-                      {slot.date} {slot.start_time} - {slot.end_time}
-                    </p>
-                    {slot.status && <p className="text-white opacity-60 text-sm">Status: {slot.status}</p>}
-                    {slot.student_name && <p className="text-white opacity-70 text-sm">Student: {slot.student_name}</p>}
-                  </div>
-                  <button
-                    className="mt-2 sm:mt-0 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
-                    onClick={() => setShowMeeting(true)}
-                  >
-                    Start Class
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </motion.div>
-
-        <Modal
-          isOpen={showMeeting}
-          onRequestClose={() => setShowMeeting(false)}
-          style={{
-            content: {
-              top: '50%',
-              left: '50%',
-              right: 'auto',
-              bottom: 'auto',
-              marginRight: '-50%',
-              transform: 'translate(-50%, -50%)',
-              width: '90%',
-              maxWidth: '800px',
-              padding: '20px',
-              borderRadius: '8px',
-              background: '#1F2937',
-            },
-          }}
-        >
-          <iframe src={meetingURL} className="w-full h-[70vh]" allow="camera; microphone" title="Video Meeting" />
-          <button
-            className="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition w-full"
-            onClick={() => setShowMeeting(false)}
-          >
-            Close
-          </button>
-        </Modal>
+        </div>
       </div>
     </div>
   );

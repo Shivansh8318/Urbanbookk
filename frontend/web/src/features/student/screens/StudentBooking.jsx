@@ -10,6 +10,7 @@ import { fetchTeachers } from '../services/studentService';
 import useBookingWebSocket from '../../shared/websocket/useBookingWebSocket';
 import ErrorBoundary from '../../shared/components/ErrorBoundary';
 import CustomToolbar from '../components/CustomToolbar';
+import Sidebar from '../components/Sidebar';
 import '../styles/calendar.css';
 
 Modal.setAppElement('#root');
@@ -30,6 +31,14 @@ const StudentBooking = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [allSlots, setAllSlots] = useState([]);
   const [showMeeting, setShowMeeting] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const sidebarItems = [
+    { label: 'Dashboard', path: '/student/dashboard', icon: '🏠' },
+    { label: 'Book Classes', path: '/student/booking', icon: '📚' },
+    { label: 'View Schedule', path: '/student/booking', icon: '📅' },
+    { label: 'Track Progress', path: '/student/booking', icon: '📊' },
+  ];
 
   if (!userData?.user_id) {
     console.error('userData is missing or invalid:', userData);
@@ -223,205 +232,243 @@ const StudentBooking = () => {
     id: slot.id,
   }));
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-gray-900 relative overflow-hidden">
         <img src={studentImage} alt="Background" className="absolute inset-0 w-full h-full object-cover opacity-30" />
-        <div className="relative max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
-          <motion.h1
-            className="text-3xl sm:text-4xl font-bold text-white text-center mb-8"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+        <div className="flex min-h-screen">
+          {/* Sidebar */}
+          <div
+            className={`fixed inset-y-0 left-0 transform ${
+              isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+            } md:translate-x-0 md:static md:flex md:w-64 transition-transform duration-300 ease-in-out z-50 bg-gray-900`}
           >
-            Book Your Classes
-          </motion.h1>
+            <Sidebar userData={userData} role="Student" sidebarItems={sidebarItems} />
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="mb-8"
+          {/* Hamburger Menu Button */}
+          <button
+            className="md:hidden fixed top-4 left-4 z-50 text-white text-2xl focus:outline-none"
+            onClick={toggleSidebar}
           >
-            <h2 className="text-2xl font-semibold text-white mb-4">Select a Teacher</h2>
-            {isLoadingTeachers ? (
-              <p className="text-white">Loading teachers...</p>
-            ) : teachers.length === 0 ? (
-              <p className="text-white opacity-70">No teachers available.</p>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {teachers.map((teacher) => (
-                  <div
-                    key={teacher.user_id}
-                    className={`p-4 rounded-lg cursor-pointer transition-all duration-300 ${
-                      selectedTeacher?.user_id === teacher.user_id
-                        ? 'bg-indigo-600 bg-opacity-30 border-2 border-indigo-500'
-                        : 'bg-gray-800 bg-opacity-50 border border-gray-600'
-                    } hover:bg-indigo-600 hover:bg-opacity-20`}
-                    onClick={() => {
-                      setSelectedTeacher(teacher);
-                      setSelectedDate(new Date());
-                      setAvailableSlots([]);
-                    }}
-                  >
-                    <p className="text-white font-semibold">{teacher.name}</p>
-                    <p className="text-white opacity-60 text-sm">{teacher.subject}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </motion.div>
+            {isSidebarOpen ? '✕' : '☰'}
+          </button>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="mb-8"
-          >
-            <h2 className="text-2xl font-semibold text-white mb-4">Available Slots</h2>
-            <Calendar
-              localizer={localizer}
-              date={selectedDate}
-              events={events}
-              startAccessor="start"
-              endAccessor="end"
-              style={{ height: 500 }}
-              className="bg-gray-800 rounded-lg p-4 border border-gray-600"
-              onSelectEvent={(event) => {
-                const slot = allSlots.find((s) => s.id === event.id);
-                if (slot) handleBookSlot(slot);
-              }}
-              onSelectSlot={({ start }) => setSelectedDate(start)}
-              onNavigate={(newDate) => setSelectedDate(newDate)}
-              selectable
-              min={new Date()}
-              components={{ toolbar: CustomToolbar }}
-            />
-          </motion.div>
+          {/* Main Content */}
+          <div className="flex-1 p-4 sm:p-6 lg:p-8">
+            <div className="relative max-w-6xl mx-auto">
+              <motion.h1
+                className="text-3xl sm:text-4xl font-bold text-white text-center mb-8"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                Book Your Classes
+              </motion.h1>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="mb-8"
-          >
-            <h2 className="text-2xl font-semibold text-white mb-4">Available Slots ({availableSlots.length})</h2>
-            {!selectedTeacher ? (
-              <p className="text-white opacity-70">Please select a teacher to view available slots.</p>
-            ) : !selectedDate ? (
-              <p className="text-white opacity-70">Please select a date to view available slots.</p>
-            ) : availableSlots.length === 0 ? (
-              <div>
-                <p className="text-white opacity-70">No available slots for this date.</p>
-                <p className="text-white opacity-50 text-sm">Try selecting another date on the calendar.</p>
-              </div>
-            ) : (
-              <div className="space-y-4 max-h-64 overflow-y-auto">
-                {availableSlots.map((slot) => (
-                  <div
-                    key={slot.id}
-                    className="flex justify-between items-center p-4 bg-gray-800 rounded-lg border border-gray-600"
-                  >
-                    <p className="text-white">
-                      {slot.date} {slot.start_time} - {slot.end_time}
-                    </p>
-                    <button
-                      className={`bg-indigo-600 text-white px-4 py-2 rounded-lg transition ${
-                        bookingSlotId === slot.id ? 'opacity-50 cursor-not-allowed' : 'hover:bg-indigo-700'
-                      }`}
-                      onClick={() => handleBookSlot(slot)}
-                      disabled={bookingSlotId === slot.id}
-                    >
-                      {bookingSlotId === slot.id ? 'Booking...' : 'Book Slot'}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-          >
-            <h2 className="text-2xl font-semibold text-white mb-4">Booked Classes</h2>
-            {bookedClasses.length === 0 ? (
-              <p className="text-white opacity-70">No booked classes.</p>
-            ) : (
-              <div className="space-y-4 max-h-64 overflow-y-auto">
-                {bookedClasses.map((booking) => (
-                  <div
-                    key={booking.id}
-                    className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-gray-800 rounded-lg border border-gray-600"
-                  >
-                    <div>
-                      <p className="text-white font-semibold">Teacher: {booking.teacher_name}</p>
-                      <p className="text-white">
-                        {booking.date} {booking.start_time} - {booking.end_time}
-                      </p>
-                      <p
-                        className={`text-sm ${
-                          booking.status === 'confirmed'
-                            ? 'text-green-400'
-                            : booking.status === 'canceled'
-                            ? 'text-red-400'
-                            : 'text-yellow-400'
-                        }`}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="mb-8"
+              >
+                <h2 className="text-2xl font-semibold text-white mb-4">Select a Teacher</h2>
+                {isLoadingTeachers ? (
+                  <p className="text-white">Loading teachers...</p>
+                ) : teachers.length === 0 ? (
+                  <p className="text-white opacity-70">No teachers available.</p>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {teachers.map((teacher) => (
+                      <div
+                        key={teacher.user_id}
+                        className={`p-4 rounded-lg cursor-pointer transition-all duration-300 ${
+                          selectedTeacher?.user_id === teacher.user_id
+                            ? 'bg-indigo-600 bg-opacity-30 border-2 border-indigo-500'
+                            : 'bg-gray-800 bg-opacity-50 border border-gray-600'
+                        } hover:bg-indigo-600 hover:bg-opacity-20`}
+                        onClick={() => {
+                          setSelectedTeacher(teacher);
+                          setSelectedDate(new Date());
+                          setAvailableSlots([]);
+                        }}
                       >
-                        Status: {booking.status}
-                      </p>
-                      {booking.payment_status && <p className="text-green-400 text-sm">Payment: Completed</p>}
-                    </div>
-                    <div className="flex space-x-2 mt-2 sm:mt-0">
-                      {!booking.payment_status && (
+                        <p className="text-white font-semibold">{teacher.name}</p>
+                        <p className="text-white opacity-60 text-sm">{teacher.subject}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="mb-8"
+              >
+                <h2 className="text-2xl font-semibold text-white mb-4">Available Slots</h2>
+                <Calendar
+                  localizer={localizer}
+                  date={selectedDate}
+                  events={events}
+                  startAccessor="start"
+                  endAccessor="end"
+                  style={{ height: 500 }}
+                  className="bg-gray-800 rounded-lg p-4 border border-gray-600"
+                  onSelectEvent={(event) => {
+                    const slot = allSlots.find((s) => s.id === event.id);
+                    if (slot) handleBookSlot(slot);
+                  }}
+                  onSelectSlot={({ start }) => setSelectedDate(start)}
+                  onNavigate={(newDate) => setSelectedDate(newDate)}
+                  selectable
+                  min={new Date()}
+                  components={{ toolbar: CustomToolbar }}
+                />
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="mb-8"
+              >
+                <h2 className="text-2xl font-semibold text-white mb-4">Available Slots ({availableSlots.length})</h2>
+                {!selectedTeacher ? (
+                  <p className="text-white opacity-70">Please select a teacher to view available slots.</p>
+                ) : !selectedDate ? (
+                  <p className="text-white opacity-70">Please select a date to view available slots.</p>
+                ) : availableSlots.length === 0 ? (
+                  <div>
+                    <p className="text-white opacity-70">No available slots for this date.</p>
+                    <p className="text-white opacity-50 text-sm">Try selecting another date on the calendar.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4 max-h-64 overflow-y-auto">
+                    {availableSlots.map((slot) => (
+                      <div
+                        key={slot.id}
+                        className="flex justify-between items-center p-4 bg-gray-800 rounded-lg border border-gray-600"
+                      >
+                        <p className="text-white">
+                          {slot.date} {slot.start_time} - {slot.end_time}
+                        </p>
                         <button
-                          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-                          onClick={() => handlePayment(booking)}
+                          className={`bg-indigo-600 text-white px-4 py-2 rounded-lg transition ${
+                            bookingSlotId === slot.id ? 'opacity-50 cursor-not-allowed' : 'hover:bg-indigo-700'
+                          }`}
+                          onClick={() => handleBookSlot(slot)}
+                          disabled={bookingSlotId === slot.id}
                         >
-                          Pay Now
+                          {bookingSlotId === slot.id ? 'Booking...' : 'Book Slot'}
                         </button>
-                      )}
-                      <button
-                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
-                        onClick={() => setShowMeeting(true)}
-                      >
-                        Start Class
-                      </button>
-                    </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            )}
-          </motion.div>
+                )}
+              </motion.div>
 
-          <Modal
-            isOpen={showMeeting}
-            onRequestClose={() => setShowMeeting(false)}
-            style={{
-              content: {
-                top: '50%',
-                left: '50%',
-                right: 'auto',
-                bottom: 'auto',
-                marginRight: '-50%',
-                transform: 'translate(-50%, -50%)',
-                width: '90%',
-                maxWidth: '800px',
-                padding: '20px',
-                borderRadius: '8px',
-                background: '#1F2937',
-              },
-            }}
-          >
-            <iframe src={meetingURL} className="w-full h-[70vh]" allow="camera; microphone" title="Video Meeting" />
-            <button
-              className="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition w-full"
-              onClick={() => setShowMeeting(false)}
-            >
-              Close
-            </button>
-          </Modal>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+              >
+                <h2 className="text-2xl font-semibold text-white mb-4">Booked Classes</h2>
+                {bookedClasses.length === 0 ? (
+                  <p className="text-white opacity-70">No booked classes.</p>
+                ) : (
+                  <div className="space-y-4 max-h-64 overflow-y-auto">
+                    {bookedClasses.map((booking) => (
+                      <div
+                        key={booking.id}
+                        className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-gray-800 rounded-lg border border-gray-600"
+                      >
+                        <div>
+                          <p className="text-white font-semibold">Teacher: {booking.teacher_name}</p>
+                          <p className="text-white">
+                            {booking.date} {booking.start_time} - {booking.end_time}
+                          </p>
+                          <p
+                            className={`text-sm ${
+                              booking.status === 'confirmed'
+                                ? 'text-green-400'
+                                : booking.status === 'canceled'
+                                ? 'text-red-400'
+                                : 'text-yellow-400'
+                            }`}
+                          >
+                            Status: {booking.status}
+                          </p>
+                          {booking.payment_status && <p className="text-green-400 text-sm">Payment: Completed</p>}
+                        </div>
+                        <div className="flex space-x-2 mt-2 sm:mt-0">
+                          {!booking.payment_status && (
+                            <button
+                              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                              onClick={() => handlePayment(booking)}
+                            >
+                              Pay Now
+                            </button>
+                          )}
+                          <button
+                            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                            onClick={() => setShowMeeting(true)}
+                          >
+                            Start Class
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+
+              <Modal
+                isOpen={showMeeting}
+                onRequestClose={() => setShowMeeting(false)}
+                style={{
+                  content: {
+                    top: '0',
+                    left: '0',
+                    right: '0',
+                    bottom: '0',
+                    margin: '0',
+                    padding: '0',
+                    width: '100%',
+                    height: '100%',
+                    border: 'none',
+                    borderRadius: '0',
+                    background: '#1F2937',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflow: 'hidden',
+                  },
+                  overlay: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    zIndex: 1000,
+                  },
+                }}
+              >
+                <iframe
+                  src={meetingURL}
+                  className="w-full h-[calc(100vh-60px)]"
+                  allow="camera; microphone"
+                  title="Video Meeting"
+                />
+                <button
+                  className="bg-red-600 text-white px-4 py-2 hover:bg-red-700 transition w-full"
+                  onClick={() => setShowMeeting(false)}
+                >
+                  Close
+                </button>
+              </Modal>
+            </div>
+          </div>
         </div>
       </div>
     </ErrorBoundary>
