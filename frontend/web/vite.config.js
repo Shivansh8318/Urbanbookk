@@ -6,12 +6,12 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://ad09-103-214-60-231.ngrok-free.app',
+        target: 'https://urbanbookk-1.onrender.com',
         changeOrigin: true,
         secure: false,
       },
       '/ws': {
-        target: 'wss://ad09-103-214-60-231.ngrok-free.app',
+        target: 'wss://urbanbookk-1.onrender.com',
         ws: true,
         changeOrigin: true,
         secure: false,

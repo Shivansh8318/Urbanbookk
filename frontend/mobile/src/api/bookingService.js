@@ -2,7 +2,7 @@ export const fetchAllSlots = async (teacherId) => {
   const timestamp = new Date().getTime();
   const randomParam = Math.floor(Math.random() * 100000);
   const response = await fetch(
-    `https://2d30-45-118-158-197.ngrok-free.app/api/booking/get-teacher-slots/?t=${timestamp}&r=${randomParam}`,
+    `https://urbanbookk-1.onrender.com/api/booking/get-teacher-slots/?t=${timestamp}&r=${randomParam}`,
     {
       method: 'POST',
       headers: {
@@ -34,7 +34,7 @@ export const fetchAvailableSlots = async (teacherId, date) => {
   const dateStr = date.toISOString().split('T')[0];
   const timestamp = new Date().getTime();
   const response = await fetch(
-    `https://2d30-45-118-158-197.ngrok-free.app/api/booking/get-teacher-slots/?t=${timestamp}`,
+    `https://urbanbookk-1.onrender.com/api/booking/get-teacher-slots/?t=${timestamp}`,
     {
       method: 'POST',
       headers: {
@@ -58,7 +58,7 @@ export const fetchAvailableSlots = async (teacherId, date) => {
 
 export const fetchBookedClasses = async (studentId) => {
   const response = await fetch(
-    'https://2d30-45-118-158-197.ngrok-free.app/api/booking/get-student-bookings/',
+    'https://urbanbookk-1.onrender.com/api/booking/get-student-bookings/',
     {
       method: 'POST',
       headers: {
@@ -73,7 +73,7 @@ export const fetchBookedClasses = async (studentId) => {
 export const fetchTeacherSlots = async (teacherId) => {
   const timestamp = new Date().getTime();
   const response = await fetch(
-    `https://2d30-45-118-158-197.ngrok-free.app/api/booking/get-teacher-slots/?t=${timestamp}`,
+    `https://urbanbookk-1.onrender.com/api/booking/get-teacher-slots/?t=${timestamp}`,
     {
       method: 'POST',
       headers: {
@@ -98,7 +98,7 @@ export const fetchTeachers = async () => {
   try {
     const timestamp = new Date().getTime();
     const response = await fetch(
-      `https://2d30-45-118-158-197.ngrok-free.app/api/teacher/list-teachers/?t=${timestamp}`,
+      `https://urbanbookk-1.onrender.com/api/teacher/list-teachers/?t=${timestamp}`,
       {
         method: 'GET',
         headers: {

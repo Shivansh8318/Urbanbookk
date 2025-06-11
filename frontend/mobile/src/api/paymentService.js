@@ -1,7 +1,7 @@
 export const createPaymentOrder = async (bookingId, amount, currency) => {
   try {
     const response = await fetch(
-      'https://2d30-45-118-158-197.ngrok-free.app/api/payment/create-order/',
+      'https://urbanbookk-1.onrender.com/api/payment/create-order/',
       {
         method: 'POST',
         headers: {
@@ -29,7 +29,7 @@ export const createPaymentOrder = async (bookingId, amount, currency) => {
 export const verifyPayment = async (orderId, paymentId, signature) => {
   try {
     const response = await fetch(
-      'https://2d30-45-118-158-197.ngrok-free.app/api/payment/verify-payment/',
+      'https://urbanbookk-1.onrender.com/api/payment/verify-payment/',
       {
         method: 'POST',
         headers: {

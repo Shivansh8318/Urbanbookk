@@ -1,6 +1,6 @@
 export const verifyTokenWithBackend = async (token, role, setVerificationStatus) => {
   try {
-    const baseUrl = 'https://2d30-45-118-158-197.ngrok-free.app/api/';
+    const baseUrl = 'https://urbanbookk-1.onrender.com/api/';
     const VERIFICATION_URL = role.toLowerCase() === 'student'
       ? `${baseUrl}student/validate-token/`
       : `${baseUrl}teacher/validate-token/`;

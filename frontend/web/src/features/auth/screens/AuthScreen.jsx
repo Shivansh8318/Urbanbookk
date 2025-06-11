@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import axios from 'axios';
+import axios from '../../../utils/axios';
+
 
 const OTPlessAppId = '9DRP3BQPAKLIZYTVT2JS';
 

@@ -23,23 +23,19 @@ const AuthScreen = ({ route, navigation }) => {
   const [userData, setUserData] = useState(null);
   const [verificationStatus, setVerificationStatus] = useState('');
 
- 
   const otplessModule = new OtplessModule();
 
-  
   const params = {
     appId: '9DRP3BQPAKLIZYTVT2JS',
   };
 
-  
   const getVerificationUrl = () => {
-    const baseUrl = 'https://2d30-45-118-158-197.ngrok-free.app/api/';
+    const baseUrl = 'https://urbanbookk-1.onrender.com/api/';
     return role.toLowerCase() === 'student'
       ? `${baseUrl}student/validate-token/`
       : `${baseUrl}teacher/validate-token/`;
   };
 
-  
   const verifyTokenWithBackend = async (token) => {
     try {
       const VERIFICATION_URL = getVerificationUrl();
@@ -64,10 +60,10 @@ const AuthScreen = ({ route, navigation }) => {
 
       if (result.success) {
         setVerificationStatus(`Verification successful: ${result.message}`);
-        
-        result.dashboard_route = role === 'Student' ? 'StudentDashboard' : 'TeacherDashboard';
-        
-      
+        result.dashboard_route = role === 'Student'
+
+ ? 'StudentDashboard' : 'TeacherDashboard';
+
         if (result.is_new_user) {
           navigation.navigate('CompleteProfileScreen', { userData: result });
         } else {
@@ -132,47 +128,6 @@ const AuthScreen = ({ route, navigation }) => {
     }
   };
 
-  const renderUserInfo = () => {
-    if (!userData) return null;
-
-    return (
-      <View style={styles.userInfoContainer}>
-        <Text style={styles.userInfoTitle}>User Information</Text>
-
-        {userData.token && (
-          <Text style={styles.userInfoText}>
-            Token: {userData.token.substring(0, 15)}...
-          </Text>
-        )}
-
-        {userData.userId && (
-          <Text style={styles.userInfoText}>User ID: {userData.userId}</Text>
-        )}
-
-        {userData.identities && userData.identities.length > 0 && (
-          <>
-            <Text style={styles.sectionTitle}>Identity</Text>
-            <Text style={styles.userInfoText}>
-              Type: {userData.identities[0].identityType}
-            </Text>
-            <Text style={styles.userInfoText}>
-              Value: {userData.identities[0].identityValue}
-            </Text>
-            {userData.identities[0].name && (
-              <Text style={styles.userInfoText}>Name: {userData.identities[0].name}</Text>
-            )}
-          </>
-        )}
-
-        {verificationStatus && (
-          <View style={styles.verificationStatusContainer}>
-            <Text style={styles.verificationStatusText}>{verificationStatus}</Text>
-          </View>
-        )}
-      </View>
-    );
-  };
-
   return (
     <View style={styles.container}>
       <LinearGradient colors={['#FFFFFF', '#F9FAFB']} style={StyleSheet.absoluteFill}>
@@ -212,7 +167,11 @@ const AuthScreen = ({ route, navigation }) => {
                     </View>
                   )}
 
-                  {renderUserInfo()}
+                  {verificationStatus && (
+                    <View style={styles.verificationStatusContainer}>
+                      <Text style={styles.verificationStatusText}>{verificationStatus}</Text>
+                    </View>
+                  )}
                 </>
               )}
             </Animated.View>
@@ -313,32 +272,6 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 14,
     color: '#111827',
-  },
-  userInfoContainer: {
-    width: '100%',
-    padding: 15,
-    backgroundColor: 'white',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-  },
-  userInfoTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 15,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#4B5563',
-    marginTop: 10,
-    marginBottom: 5,
-  },
-  userInfoText: {
-    fontSize: 14,
-    color: '#4B5563',
-    marginBottom: 5,
   },
   verificationStatusContainer: {
     marginTop: 15,

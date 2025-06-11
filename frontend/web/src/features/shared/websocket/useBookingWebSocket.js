@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 const useBookingWebSocket = (userId, role) => {
   const navigate = useNavigate();
-  const getWebSocketUrl = () => `/ws/booking/${userId}/`;
+  const getWebSocketUrl = () => `wss://urbanbookk-1.onrender.com/ws/booking/${userId}/`;
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(getWebSocketUrl(), {
     onOpen: () => console.log(`WebSocket Connected for ${role}Booking:`, getWebSocketUrl()),
