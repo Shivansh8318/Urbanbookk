@@ -137,7 +137,7 @@ const StudentBooking = ({ route, navigation }) => {
         console.log('Fetching all teachers slots for initial load');
         const timestamp = new Date().getTime();
         const response = await fetch(
-          `https://2d30-45-118-158-197.ngrok-free.app/api/booking/get-all-teacher-slots/?t=${timestamp}`,
+          `https://urbanbookk-1.onrender.com/api/booking/get-all-teacher-slots/?t=${timestamp}`,
           {
             method: 'GET',
             headers: {

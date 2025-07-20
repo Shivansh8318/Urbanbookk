@@ -1,4 +1,3 @@
-// src/features/student/screens/StudentDashboard.jsx
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -11,6 +10,7 @@ const StudentDashboard = () => {
   const { userData } = state || {};
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     fetchProfile(userData.user_id)
@@ -24,6 +24,10 @@ const StudentDashboard = () => {
     { label: 'View Schedule', path: '/student/booking', icon: '📅' },
     { label: 'Track Progress', path: '/student/booking', icon: '📊' },
   ];
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black relative overflow-hidden">
@@ -46,9 +50,25 @@ const StudentDashboard = () => {
       </div>
 
       <div className="flex min-h-screen">
-        <Sidebar userData={userData} role="Student" sidebarItems={sidebarItems} />
+        {/* Sidebar */}
+        <div
+          className={`fixed inset-y-0 left-0 transform ${
+            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          } md:translate-x-0 md:static md:flex md:w-64 transition-transform duration-300 ease-in-out z-50 bg-gray-900`}
+        >
+          <Sidebar userData={userData} role="Student" sidebarItems={sidebarItems} />
+        </div>
 
-        <div className="flex-1 ml-64 p-6 sm:p-8 flex flex-col items-center min-h-screen justify-center">
+        {/* Hamburger Menu Button */}
+        <button
+          className="md:hidden fixed top-4 left-4 z-50 text-white text-2xl focus:outline-none"
+          onClick={toggleSidebar}
+        >
+          {isSidebarOpen ? '✕' : '☰'}
+        </button>
+
+        {/* Main Content */}
+        <div className="flex-1 p-6 sm:p-8 flex flex-col items-center min-h-screen justify-center">
           <motion.div
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}

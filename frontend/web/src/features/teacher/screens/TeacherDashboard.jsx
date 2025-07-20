@@ -1,22 +1,27 @@
-// src/features/teacher/screens/TeacherDashboard.jsx
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import teacherImage from '../../../assets/images/9.jpg';
 import { fetchProfile } from '../services/teacherService';
-import Sidebar from '../components/Sidebar'; // Can reuse from student
+import Sidebar from '../components/Sidebar';
 
 const TeacherDashboard = () => {
   const { state } = useLocation();
   const { userData } = state || {};
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
-    fetchProfile(userData.user_id)
-      .then((data) => setProfileData(data))
-      .catch((error) => console.error('Error fetching profile:', error));
-  }, [userData]);
+    if (!userData?.user_id) {
+      alert('User data missing. Please log in again.');
+      navigate('/auth/Teacher');
+    } else {
+      fetchProfile(userData.user_id)
+        .then((data) => setProfileData(data))
+        .catch((error) => console.error('Error fetching profile:', error));
+    }
+  }, [userData, navigate]);
 
   const sidebarItems = [
     { label: 'Dashboard', path: '/teacher/dashboard', icon: '🏠' },
@@ -42,13 +47,31 @@ const TeacherDashboard = () => {
       </motion.div>
 
       <div className="absolute inset-0 pointer-events-none">
-        <div className="w-full h-full bg-[radial-gradient(circle_at_center,_rgba(59, personally predicted: 130,246,0.1)_0%,_transparent_70%)] animate-pulse" />
+        <div className="w-full h-full bg-[radial-gradient(circle_at_center,_rgba(59,130,246,0.1)_0%,_transparent_70%)] animate-pulse" />
       </div>
 
-      <div className="flex min-h-screen">
-        <Sidebar userData={userData} role="Teacher" sidebarItems={sidebarItems} />
+      <div className="flex min-h-screen relative">
+        {/* Sidebar */}
+        <div
+          className={`fixed inset-y-0 left-0 transform ${
+            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          } md:translate-x-0 md:static md:flex md:w-64 transition-transform duration-300 ease-in-out z-50`}
+        >
+          <div className="w-64 h-full">
+            <Sidebar userData={userData} role="Teacher" sidebarItems={sidebarItems} />
+          </div>
+        </div>
 
-        <div className="flex-1 ml-64 p-6 sm:p-8 flex flex-col items-center min-h-screen justify-center">
+        {/* Hamburger Menu Button */}
+        <button
+          className="md:hidden fixed top-4 left-4 z-50 text-white text-2xl focus:outline-none bg-gray-800 p-2 rounded-lg"
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        >
+          {isSidebarOpen ? '✕' : '☰'}
+        </button>
+
+        {/* Main Content */}
+        <div className="flex-1 p-6 sm:p-8 flex flex-col items-center min-h-screen justify-center md:ml-0">
           <motion.div
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}

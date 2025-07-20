@@ -91,10 +91,10 @@ WSGI_APPLICATION = "urb_backend.wsgi.application"
 ASGI_APPLICATION = 'urb_backend.asgi.application'
 
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],  # Redis server
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": ["rediss://:ATABAAIjcDFiOTZiNTU4ODFiNWQ0ZmRjYWQ0YTRkZDAyMTlkNzY1NXAxMA@legal-stag-12289.upstash.io:6379/0"],
         },
     },
 }

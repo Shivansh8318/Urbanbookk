@@ -6,7 +6,7 @@ const useWebSocket = (userId, onMessage) => {
 
   useEffect(() => {
     const websocket = new ReconnectingWebSocket(
-      `wss://2d30-45-118-158-197.ngrok-free.app/ws/booking/${userId}/`
+      `wss://urbanbookk-1.onrender.com/ws/booking/${userId}/`
     );
     setWs(websocket);
 

@@ -1,11 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-
-// Import the Footer component
 import Footer from '../components/layout/Footer';
 
-// Import all images
 import image1 from '../assets/images/1.jpg';
 import image2 from '../assets/images/2.jpg';
 import image3 from '../assets/images/3.jpg';

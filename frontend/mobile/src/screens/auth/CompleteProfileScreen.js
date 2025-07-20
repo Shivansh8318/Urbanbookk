@@ -49,7 +49,7 @@ const CompleteProfileScreen = () => {
 
     try {
       const response = await fetch(
-        `https://2d30-45-118-158-197.ngrok-free.app/api/${isStudent ? 'student' : 'teacher'}/update-profile/`,
+        `https://urbanbookk-1.onrender.com/api/${isStudent ? 'student' : 'teacher'}/update-profile/`,
         {
           method: 'POST',
           headers: {
