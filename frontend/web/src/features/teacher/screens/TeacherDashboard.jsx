@@ -50,21 +50,28 @@ const TeacherDashboard = () => {
         <div className="w-full h-full bg-[radial-gradient(circle_at_center,_rgba(59,130,246,0.1)_0%,_transparent_70%)] animate-pulse" />
       </div>
 
-      <div className="flex min-h-screen">
-        <Sidebar
-          userData={userData}
-          role="Teacher"
-          sidebarItems={sidebarItems}
-          isOpen={isSidebarOpen}
-          setIsOpen={setIsSidebarOpen}
-        />
-        <div className="flex-1 p-6 sm:p-8 flex flex-col items-center min-h-screen justify-center">
-          <button
-            className="lg:hidden text-white text-2xl p-2 focus:outline-none"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          >
-            ☰
-          </button>
+      <div className="flex min-h-screen relative">
+        {/* Sidebar */}
+        <div
+          className={`fixed inset-y-0 left-0 transform ${
+            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          } md:translate-x-0 md:static md:flex md:w-64 transition-transform duration-300 ease-in-out z-50`}
+        >
+          <div className="w-64 h-full">
+            <Sidebar userData={userData} role="Teacher" sidebarItems={sidebarItems} />
+          </div>
+        </div>
+
+        {/* Hamburger Menu Button */}
+        <button
+          className="md:hidden fixed top-4 left-4 z-50 text-white text-2xl focus:outline-none bg-gray-800 p-2 rounded-lg"
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        >
+          {isSidebarOpen ? '✕' : '☰'}
+        </button>
+
+        {/* Main Content */}
+        <div className="flex-1 p-6 sm:p-8 flex flex-col items-center min-h-screen justify-center md:ml-0">
           <motion.div
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}

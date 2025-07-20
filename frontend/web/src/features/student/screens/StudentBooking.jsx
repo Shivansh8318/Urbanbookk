@@ -240,26 +240,28 @@ const StudentBooking = () => {
     <ErrorBoundary>
       <div className="min-h-screen bg-gray-900 relative overflow-hidden">
         <img src={studentImage} alt="Background" className="absolute inset-0 w-full h-full object-cover opacity-30" />
-        <div className="flex min-h-screen">
+        <div className="flex min-h-screen relative">
           {/* Sidebar */}
           <div
             className={`fixed inset-y-0 left-0 transform ${
               isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-            } md:translate-x-0 md:static md:flex md:w-64 transition-transform duration-300 ease-in-out z-50 bg-gray-900`}
+            } md:translate-x-0 md:static md:flex md:w-64 transition-transform duration-300 ease-in-out z-50`}
           >
-            <Sidebar userData={userData} role="Student" sidebarItems={sidebarItems} />
+            <div className="w-64 h-full">
+              <Sidebar userData={userData} role="Student" sidebarItems={sidebarItems} />
+            </div>
           </div>
 
           {/* Hamburger Menu Button */}
           <button
-            className="md:hidden fixed top-4 left-4 z-50 text-white text-2xl focus:outline-none"
+            className="md:hidden fixed top-4 left-4 z-50 text-white text-2xl focus:outline-none bg-gray-800 p-2 rounded-lg"
             onClick={toggleSidebar}
           >
             {isSidebarOpen ? '✕' : '☰'}
           </button>
 
           {/* Main Content */}
-          <div className="flex-1 p-4 sm:p-6 lg:p-8">
+          <div className="flex-1 p-4 sm:p-6 lg:p-8 md:ml-0">
             <div className="relative max-w-6xl mx-auto">
               <motion.h1
                 className="text-3xl sm:text-4xl font-bold text-white text-center mb-8"
