@@ -338,17 +338,3 @@ npm test
    - Clean build: `cd android && ./gradlew clean`
    - Update pods: `cd ios && pod install`
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 📞 Support
-
-For support and questions:
-- Create an issue in the repository
-- Contact the development team
-- Check the documentation wiki
-
----
-
-**Happy Teaching and Learning! 🎓** 
